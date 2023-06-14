@@ -15,17 +15,15 @@ jobs:
     name: test
     runs-on: ubuntu-latest
 
-    # Service containers to run with `container-job`
     services:
-      # Label used to access the service container
       postgres:
-        # Docker Hub image
         image: postgres
-        # Provide the password for postgres
         env:
           POSTGRES_DB: simple_bank
           POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -40,9 +38,6 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: 1.19
-
-    # - name: Build
-    #   run: go build -v ./...
 
     - name: Install golang-migrate
       run: | 
