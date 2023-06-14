@@ -31,19 +31,8 @@ func createRandomAccount(t *testing.T) Account {
 	return account
 }
 
-func deleteTestAccount(t *testing.T, account1 Account) {
-	err := testQueries.DeleteAccount(context.Background(), account1.ID)
-	require.NoError(t, err)
-
-	account2, err := testQueries.GetAccount(context.Background(), account1.ID)
-	require.Error(t, err)
-	require.EqualError(t, err, sql.ErrNoRows.Error())
-	require.Empty(t, account2)
-}
-
 func TestCreateAccount(t *testing.T) {
-	account := createRandomAccount(t)
-	deleteTestAccount(t, account)
+	createRandomAccount(t)
 }
 
 func TestGetAccount(t *testing.T) {
@@ -57,8 +46,6 @@ func TestGetAccount(t *testing.T) {
 	require.Equal(t, account1.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second) // Difference can not be greater than one second
-
-	deleteTestAccount(t, account1)
 }
 
 func TestUpdateAccount(t *testing.T) {
@@ -78,13 +65,17 @@ func TestUpdateAccount(t *testing.T) {
 	require.Equal(t, arg.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second) // Difference can not be greater than one second
-
-	deleteTestAccount(t, account1)
 }
 
 func TestDeleteAccount(t *testing.T) {
 	account1 := createRandomAccount(t)
-	deleteTestAccount(t, account1)
+	err := testQueries.DeleteAccount(context.Background(), account1.ID)
+	require.NoError(t, err)
+
+	account2, err := testQueries.GetAccount(context.Background(), account1.ID)
+	require.Error(t, err)
+	require.EqualError(t, err, sql.ErrNoRows.Error())
+	require.Empty(t, account2)
 }
 
 func TestListAccounts(t *testing.T) {
@@ -104,9 +95,5 @@ func TestListAccounts(t *testing.T) {
 
 	for _, account := range accounts2 {
 		require.NotEmpty(t, account)
-	}
-
-	for _, account := range accounts1 {
-		deleteTestAccount(t, account)
 	}
 }
