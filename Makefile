@@ -7,7 +7,7 @@ startdb:
 	docker start postgres
 
 postgres:
-	docker run --name postgres -p 5432:5432 -e POSTGRES_USER=$(DB_USER) -e POSTGRES_PASSWORD=$(DB_PASSWORD) -d postgres:alpine
+	docker run --name postgres --network simplebank-net -p 5432:5432 -e POSTGRES_USER=$(DB_USER) -e POSTGRES_PASSWORD=$(DB_PASSWORD) -d postgres:alpine
 
 createdb:
 	docker exec -it postgres createdb --username=$(DB_USER) --owner=$(DB_USER) $(DB_NAME)
@@ -36,4 +36,10 @@ server:
 mock:
 	mockgen --build_flags=--mod=mod -package=mockdb -destination=db/mock/store.go github.com/jotabf/simplebank/db/sqlc Store
 
-.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate sqlc test server mock
+image: 
+	docker build -t simplebank:latest .
+
+container:
+	docker run --name simplebank --network simplebank-net -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable" simplebank:latest
+
+.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate sqlc test server mock image container
