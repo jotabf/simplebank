@@ -5,9 +5,11 @@
 # useful for ensuring that errors are caught and dealt with quickly.
 set -e 
 
+echo "Source environments"
+source /app/app.env
+
 echo "Run db migration: $DB_SOURCE"
 /app/migrate -path /app/db/migration -database $DB_SOURCE -verbose up
-#/app/migrate -path /app/db/migration -database postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable -verbose up
 
 echo "Start the app"
 
