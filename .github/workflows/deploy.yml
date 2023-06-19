@@ -1,4 +1,4 @@
-name: Deply to production
+name: Deploy to production
 
 on:
   push:
@@ -28,6 +28,16 @@ jobs:
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Remove local environment variables
+      id: remove-env
+      run: rm app.env
+
+    - name: Load AWS secrets
+      uses: aws-actions/aws-secretsmanager-get-secrets@v1
+      with:
+        secret-ids: simple_bank
+        parse-json-secrets: false
 
     - name: Build, tag, and push docker image to Amazon ECR
       env:
