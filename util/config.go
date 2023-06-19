@@ -16,7 +16,20 @@ type Config struct {
 	AccessTokenDuration time.Duration `mapstructure:"ACCESS_TOKEN_DURATION"`
 }
 
-// LoadConfig reads the configuration from the file or environment variables
+// LoadConfig loads the configuration from the given path. It uses Viper to read
+// the configuration file and Unmarshal it into the given config struct.
+// It returns an error if the configuration file could not be read or
+// unmarshalled.
+//
+// Parameters:
+//
+//	path: The path of the configuration file.
+//
+// Returns:
+//
+//	config: The configuration struct.
+//	err:    An error if the configuration file could not be read or
+//	        unmarshalled.
 func LoadConfig(path string) (config *Config, err error) {
 	viper.AddConfigPath(path)
 	viper.SetConfigName("app")
