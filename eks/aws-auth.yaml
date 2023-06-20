@@ -4,8 +4,9 @@ metadata:
   name: aws-auth 
   namespace: kube-system 
 data: 
-  mapUsers: | 
-    - userarn: arn:aws:iam::793968663653:user/github-simplebank
-      username: github-ci
+  mapRoles: |
+    - rolearn: arn:aws:iam::793968663653:role/GitHubAction-AssumeRoleWithAction
+      username: system:node:{{EC2PrivateDNSName}}
       groups:
-        - system:masters
+        - system:bootstrappers
+        - system:nodes
