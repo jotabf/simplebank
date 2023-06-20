@@ -40,13 +40,4 @@ def write_secrets(filename, secret):
         for key, value in secret_dict.items():
             file.write(f"{key}={value}\n")
 
-def load_env_variables(file_path):
-    with open(file_path, "r") as file:
-        for line in file:
-            line = line.strip()
-            if line and not line.startswith("#"):
-                key, value = line.split("=")
-                os.environ[key] = value
-
 write_secrets("app.env", get_secret())
-load_env_variables("app.env")
