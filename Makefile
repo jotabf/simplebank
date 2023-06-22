@@ -24,6 +24,12 @@ migratedown:
 migratecreate:
 	migrate create -ext sql -dir db/migration/ -seq $(NAME)
 
+db_docs:
+	dbdocs build doc/db.dbml 
+
+db_schema:
+	dbml2sql  --postgres -o doc/schema.sql doc/db.dbml
+
 sqlc:
 	sqlc generate
 
@@ -42,4 +48,4 @@ image:
 container:
 	docker run --name simplebank --network simplebank-net -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable" simplebank:latest
 
-.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate sqlc test server mock image container
+.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate db_docs db_schema sqlc test server mock image container
