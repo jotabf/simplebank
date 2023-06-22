@@ -53,6 +53,8 @@ func (server *Server) setupeRouters() {
 	router.POST("/users/login", server.loginUser)
 	router.GET("/users", server.getUser)
 
+	router.POST("/tokens/renew", server.renewAccessToken)
+
 	authRouters.POST("/accounts", server.createAccount)
 	authRouters.GET("/accounts/:id", server.getAccount)
 	authRouters.GET("/accounts", server.listAccount)
