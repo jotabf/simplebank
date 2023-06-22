@@ -136,13 +136,6 @@ func (server *Server) loginUser(ctx *gin.Context) {
 		db.GetUserParams{Username: req.User, Email: req.User})
 	if err != nil {
 		if errors.Is(err, db.ErrRecordNotFound) {
-			if pqErr, ok := err.(*pq.Error); ok {
-				switch pqErr.Code.Name() {
-				case "unique_violation":
-					ctx.JSON(http.StatusForbidden, errorResponse(err))
-					return
-				}
-			}
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
