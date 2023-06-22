@@ -48,4 +48,16 @@ image:
 container:
 	docker run --name simplebank --network simplebank-net -p 8080:8080 -e GIN_MODE=release -e DB_SOURCE="postgresql://root:secret@postgres:5432/simple_bank?sslmode=disable" simplebank:latest
 
-.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate db_docs db_schema sqlc test server mock image container
+proto:
+	rm -f pb/*.go
+	rm -f doc/swagger/*.swagger.json
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
+	--openapiv2_out=doc/swagger --openapiv2_opt=allow_merge=true,merge_file_name=simple_bank \
+	proto/*.proto
+
+evans:
+	~/Downloads/evans_linux_386/evans -r repl --port 9090
+
+.PHONY: startdb postgres createdb dropdb migrateup migratedown migratecreate db_docs db_schema sqlc test server mock image container proto evans
